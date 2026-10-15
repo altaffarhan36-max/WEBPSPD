@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Activity Diagram Sistem Sertifikasi Mekanik</title>
+  <desc id="desc">Diagram aktivitas login dan alur Master, GL, Mechanic, serta sistem database MySQL.</desc>
+  <defs>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#dbe3ed"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#344256"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#202b3b}
+      .title{font-size:28px;font-weight:700;fill:#344256}
+      .lane-title{font-size:20px;font-weight:700;letter-spacing:1px;fill:#657187}
+      .section-title{font-size:16px;font-weight:700;fill:#56657a}
+      .node{fill:#fff;stroke:#334155;stroke-width:2}
+      .role-master{stroke:#7c3aed}.role-gl{stroke:#1686a8}.role-mechanic{stroke:#39834f}
+      .node-text{font-size:15px;font-weight:600;text-anchor:middle}
+      .small{font-size:13px;font-weight:400;fill:#596579;text-anchor:middle}
+      .flow{fill:none;stroke:#344256;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+      .branch{fill:none;stroke:#77849a;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+      .divider{stroke:#cbd4df;stroke-width:1.5}
+      .lane-border{fill:#fff;stroke:#99a5b5;stroke-width:2}
+      .db{fill:#f1f5f9;stroke:#334155;stroke-width:2}
+    </style>
+  </defs>
+
+  <rect width="1500" height="1080" fill="#fff"/>
+  <rect width="1500" height="1080" fill="url(#dots)"/>
+  <rect class="lane-border" x="34" y="24" width="1432" height="1032" rx="4"/>
+  <rect x="35" y="25" width="1430" height="62" fill="#f8fafc"/>
+  <text class="title" x="750" y="64" text-anchor="middle">ACTIVITY DIAGRAM · SERTIFIKASI MEKANIK</text>
+
+  <rect x="35" y="87" width="1430" height="62" fill="#f8fafc"/>
+  <text class="lane-title" x="392" y="126" text-anchor="middle">PENGGUNA</text>
+  <text class="lane-title" x="1090" y="126" text-anchor="middle">SISTEM &amp; MYSQL</text>
+  <line class="divider" x1="750" y1="87" x2="750" y2="1055"/>
+  <line class="divider" x1="35" y1="149" x2="1465" y2="149"/>
+
+  <!-- Login and role routing -->
+  <circle cx="95" cy="202" r="15" fill="#111827"/>
+  <path class="flow" d="M110 202 H155"/>
+  <rect class="node" x="160" y="174" width="250" height="56" rx="28"/>
+  <text class="node-text" x="285" y="208">Masukkan username &amp; password</text>
+  <path class="flow" d="M410 202 H835"/>
+  <rect class="node" x="840" y="174" width="270" height="56" rx="28"/>
+  <text class="node-text" x="975" y="208">Sistem memvalidasi akun</text>
+  <path class="flow" d="M1110 202 H1180"/>
+  <polygon points="1260,160 1340,202 1260,244 1180,202" fill="#fff" stroke="#334155" stroke-width="2"/>
+  <text class="node-text" x="1260" y="198"><tspan x="1260">Akun</tspan><tspan x="1260" dy="18">valid?</tspan></text>
+  <path class="branch" d="M1260 160 V156 H1430 V202"/>
+  <rect class="node" x="1322" y="208" width="112" height="42" rx="21"/>
+  <text class="small" x="1378" y="234">Login ulang</text>
+  <text class="small" x="1410" y="180">Tidak</text>
+  <path class="flow" d="M1180 202 H1140 V260 H750"/>
+  <rect x="792" y="242" width="274" height="36" rx="18" fill="#f1f5f9" stroke="#7b8798" stroke-width="1.5"/>
+  <text class="small" x="929" y="265">Sistem membaca role akun</text>
+
+  <!-- Role swimlanes -->
+  <rect x="35" y="292" width="1430" height="225" fill="#fbfaff" fill-opacity=".92"/>
+  <line class="divider" x1="35" y1="517" x2="1465" y2="517"/>
+  <rect x="35" y="517" width="1430" height="300" fill="#f7fcfd" fill-opacity=".94"/>
+  <line class="divider" x1="35" y1="817" x2="1465" y2="817"/>
+  <rect x="35" y="817" width="1430" height="238" fill="#f8fcf8" fill-opacity=".94"/>
+  <text class="section-title" x="55" y="318">MASTER</text>
+  <text class="section-title" x="55" y="543">GL · GROUP LEADER</text>
+  <text class="section-title" x="55" y="843">MECHANIC</text>
+
+  <!-- Master flow -->
+  <path class="branch" d="M929 278 V300 H730 V355 H710"/>
+  <text class="small" x="680" y="337">Role Master</text>
+  <rect class="node role-master" x="390" y="330" width="320" height="70" rx="24"/>
+  <text class="node-text" x="550" y="358"><tspan x="550">Master membuka rekap</tspan><tspan x="550" dy="21">sertifikasi seluruh mekanik</tspan></text>
+  <path class="flow" d="M710 365 H825"/>
+  <rect class="node role-master" x="830" y="330" width="330" height="70" rx="24"/>
+  <text class="node-text" x="995" y="358"><tspan x="995">Sistem menampilkan grade,</tspan><tspan x="995" dy="21">Detail, dan STPR terbaru</tspan></text>
+  <path class="flow" d="M550 400 V450"/>
+  <rect class="node role-master" x="390" y="450" width="320" height="52" rx="24"/>
+  <text class="node-text" x="550" y="482">Master membuat akun GL / Mechanic</text>
+  <path class="flow" d="M710 476 H825"/>
+  <path class="db" d="M850 445 H1130 Q1160 445 1160 460 V490 Q1160 505 1130 505 H850 Q820 505 820 490 V460 Q820 445 850 445 Z"/>
+  <ellipse cx="990" cy="460" rx="140" ry="15" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+  <text class="node-text" x="990" y="480">Simpan akun + password hash</text>
+
+  <!-- GL assessment flow -->
+  <path class="branch" d="M929 278 V530 H710"/>
+  <text class="small" x="680" y="548">Role GL</text>
+  <rect class="node role-gl" x="390" y="565" width="320" height="78" rx="24"/>
+  <text class="node-text" x="550" y="593"><tspan x="550">GL memilih mekanik dan mengisi</tspan><tspan x="550" dy="21">nilai 12 kriteria (skala 1–4)</tspan></text>
+  <path class="flow" d="M710 604 H815"/>
+  <rect class="node role-gl" x="820" y="565" width="330" height="78" rx="24"/>
+  <text class="node-text" x="985" y="593"><tspan x="985">Validasi semua nilai;</tspan><tspan x="985" dy="21">hitung rata-rata</tspan></text>
+  <path class="flow" d="M1150 604 H1190"/>
+  <polygon points="1280,558 1360,604 1280,650 1200,604" fill="#fff" stroke="#1686a8" stroke-width="2"/>
+  <text class="node-text" x="1280" y="600"><tspan x="1280">Rata-rata</tspan><tspan x="1280" dy="18">≥ 2,00?</tspan></text>
+  <path class="branch" d="M1280 650 V696 H1150"/>
+  <text class="small" x="1250" y="678">Ya / Tidak</text>
+  <path class="db" d="M850 670 H1130 Q1160 670 1160 685 V730 Q1160 745 1130 745 H850 Q820 745 820 730 V685 Q820 670 850 670 Z"/>
+  <ellipse cx="990" cy="685" rx="140" ry="15" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+  <text class="node-text" x="990" y="707"><tspan x="990">Simpan penilaian + skor</tspan><tspan x="990" dy="19">+ GL + timestamp di MySQL</tspan></text>
+  <path class="flow" d="M820 708 H710"/>
+  <rect class="node role-gl" x="390" y="670" width="320" height="78" rx="24"/>
+  <text class="node-text" x="550" y="698"><tspan x="550">GL melihat rekap penilaian</tspan><tspan x="550" dy="21">dari akunnya sendiri</tspan></text>
+  <path class="branch" d="M990 745 V780 H1330 V400 H1160"/>
+  <text class="small" x="1250" y="765">Nilai terbaru tersedia pada STPR Master</text>
+
+  <!-- Mechanic flow -->
+  <path class="branch" d="M929 278 V830 H710"/>
+  <text class="small" x="680" y="848">Role Mechanic</text>
+  <rect class="node role-mechanic" x="390" y="870" width="320" height="78" rx="24"/>
+  <text class="node-text" x="550" y="898"><tspan x="550">Mechanic masuk ke</tspan><tspan x="550" dy="21">rekap performa pribadi</tspan></text>
+  <path class="flow" d="M710 909 H815"/>
+  <rect class="node role-mechanic" x="820" y="870" width="390" height="78" rx="24"/>
+  <text class="node-text" x="1015" y="898"><tspan x="1015">Sistem hanya mengambil data</tspan><tspan x="1015" dy="21">milik mechanic_id akun itu</tspan></text>
+  <path class="flow" d="M1210 909 H1250"/>
+  <rect class="node role-mechanic" x="1255" y="870" width="175" height="78" rx="24"/>
+  <text class="node-text" x="1342" y="891"><tspan x="1342">Masa kerja,</tspan><tspan x="1342" dy="19">ATR, passing</tspan><tspan x="1342" dy="19">duration, hasil</tspan></text>
+
+  <circle cx="750" cy="1007" r="19" fill="#fff" stroke="#111827" stroke-width="4"/>
+  <circle cx="750" cy="1007" r="12" fill="#111827"/>
+  <path class="branch" d="M550 948 V1007 H730"/>
+  <path class="branch" d="M1342 948 V1007 H770"/>
+  <text class="small" x="750" y="1043">Keluar / selesai</text>
+</svg>

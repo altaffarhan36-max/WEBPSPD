@@ -1,0 +1,17 @@
+# Local database credentials
+/api/database.local.php
+/.env
+/.env.*
+!.env.example
+
+# Local/editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dependency and runtime output
+/vendor/
+/node_modules/
+/storage/
+/tmp/
