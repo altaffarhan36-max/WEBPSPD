@@ -1,6 +1,6 @@
 # Mockup statis People Development
 
-Folder ini berisi pratinjau frontend untuk deployment statis di Vercel. Halaman tidak memakai PHP, API, login, atau database. Angka dan nama yang ditampilkan hanya contoh; filter tabel dan kalkulator MPP berjalan di browser.
+Folder ini berisi pratinjau frontend untuk deployment statis di Vercel. Alurnya dimulai dari login demo, berlanjut ke menu pemilihan modul, lalu ke halaman Man Power, Training, Certification, atau Kalkulator MPP. Gunakan akun tampilan `admin` / `demo123`; formulir login hanya simulasi dan tidak memverifikasi akun. Halaman tidak memakai PHP, API, atau database. Angka dan nama yang ditampilkan hanya contoh; filter tabel dan kalkulator MPP berjalan di browser.
 
 ## Deploy ke Vercel
 

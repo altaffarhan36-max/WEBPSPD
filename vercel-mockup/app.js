@@ -1,6 +1,36 @@
 const navButtons = [...document.querySelectorAll('.nav-item')];
 const pages = [...document.querySelectorAll('.page-view')];
 const pageNames = { overview: 'Ringkasan', manpower: 'Man Power', certification: 'Certification', training: 'Training', calculator: 'Kalkulator MPP' };
+const appShell = document.querySelector('#appShell');
+function openModule(name) {
+  document.querySelector('#loginScreen').classList.remove('active');
+  document.querySelector('#modulesScreen').classList.remove('active');
+  appShell.hidden = false;
+  showPage(name);
+}
+document.querySelector('#demoLoginForm').addEventListener('submit', event => {
+  event.preventDefault();
+  const username = document.querySelector('#demoUsername').value.trim() || 'Admin Demo';
+  document.querySelector('#moduleUsername').textContent = username;
+  document.querySelector('#loginScreen').classList.remove('active');
+  document.querySelector('#modulesScreen').classList.add('active');
+});
+document.querySelector('#togglePassword').addEventListener('click', event => {
+  const input = document.querySelector('#demoPassword');
+  input.type = input.type === 'password' ? 'text' : 'password';
+  event.currentTarget.textContent = input.type === 'password' ? 'Tampilkan' : 'Sembunyikan';
+});
+document.querySelectorAll('[data-open-page]').forEach(button => button.addEventListener('click', () => openModule(button.dataset.openPage)));
+document.querySelector('#returnToModules').addEventListener('click', () => {
+  appShell.hidden = true;
+  document.querySelector('#modulesScreen').classList.add('active');
+});
+function returnToLogin() {
+  appShell.hidden = true;
+  document.querySelector('#modulesScreen').classList.remove('active');
+  document.querySelector('#loginScreen').classList.add('active');
+}
+document.querySelector('#logoutFromModules').addEventListener('click', returnToLogin);
 function showPage(name) {
   pages.forEach(page => page.classList.toggle('visible', page.dataset.page === name));
   navButtons.forEach(button => button.classList.toggle('active', button.dataset.view === name));

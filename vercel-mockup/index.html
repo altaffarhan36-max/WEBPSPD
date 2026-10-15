@@ -7,9 +7,25 @@
   <meta name="description" content="Mockup dashboard People Development PT Star Wagen Indonesia">
   <title>People Development | Star Wagen Indonesia</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="flow.css">
+  <link rel="stylesheet" href="flow-responsive.css">
 </head>
 <body>
-  <div class="app-shell">
+  <section class="flow-screen login-screen active" id="loginScreen">
+    <div class="login-welcome"><div class="welcome-brand"><span class="brand-mark">SW</span><span>PT STAR WAGEN INDONESIA</span></div><div class="welcome-copy"><p class="flow-eyebrow">PRODUCT SUPPORT</p><h1>People Development<br><span>Management System</span></h1><p class="welcome-description">Satu ruang untuk mengelola manpower, training, dan sertifikasi mekanik.</p><div class="welcome-points"><span><i>✓</i> Man Power</span><span><i>✓</i> Training</span><span><i>✓</i> Certification</span></div></div><div class="welcome-footer"><span class="red-stripes"></span>Prototype / Demo · Data contoh</div></div>
+    <div class="login-panel-wrap"><form id="demoLoginForm" class="login-panel"><div class="login-logo"><span class="brand-mark">SW</span><strong>STAR WAGEN</strong></div><p class="flow-eyebrow dark-eyebrow">PEOPLE DEVELOPMENT SYSTEM</p><h2>Selamat datang</h2><p class="login-description">Masuk untuk melanjutkan ke workspace Anda.</p><label for="demoUsername">Username</label><input id="demoUsername" name="username" autocomplete="username" placeholder="Masukkan username" value="admin" required><label for="demoPassword">Password</label><input id="demoPassword" name="password" type="password" autocomplete="current-password" placeholder="Masukkan password" value="demo123" required><div class="login-options"><label class="remember-option"><input type="checkbox" checked> Ingat saya</label><button type="button" id="togglePassword">Tampilkan</button></div><button class="login-submit" type="submit">Masuk <span>→</span></button><p class="login-help">Akun demo: <strong>admin / demo123</strong></p><p class="mockup-disclaimer">Tampilan simulasi · Form login tidak memverifikasi akun.</p></form></div>
+  </section>
+
+  <section class="flow-screen modules-screen" id="modulesScreen">
+    <header class="modules-topbar"><a class="brand" href="#modules"><span class="brand-mark">SW</span><span class="brand-copy"><strong>PT STAR WAGEN INDONESIA</strong><small>PRODUCT SUPPORT · PEOPLE DEVELOPMENT</small></span></a><div class="modules-user"><span class="avatar">AD</span><span><strong id="moduleUsername">Admin Demo</strong><small>Master · Mockup</small></span><button id="logoutFromModules" class="logout-button">Keluar</button></div></header>
+    <main class="modules-content"><div class="module-intro"><p class="flow-eyebrow">PEOPLE DEVELOPMENT SYSTEM</p><h1>Pilih Modul</h1><p>Pilih area kerja yang ingin Anda buka.</p></div><div class="module-cards">
+      <article class="module-choice"><div class="choice-top"><span class="choice-number">01</span><span class="choice-icon red-icon">♙</span></div><h2>Man Power</h2><p>Monitoring tenaga kerja dan perencanaan kebutuhan manpower.</p><div class="choice-actions"><button data-open-page="manpower">Monitoring Man Power <span>→</span></button><button class="secondary-choice" data-open-page="calculator">Kalkulator MPP <span>→</span></button></div></article>
+      <article class="module-choice"><div class="choice-top"><span class="choice-number">02</span><span class="choice-icon blue-icon">▤</span></div><h2>Training</h2><p>Lihat program pelatihan, peserta, dan capaian pengembangan.</p><div class="choice-actions"><button data-open-page="training">Buka Training <span>→</span></button></div></article>
+      <article class="module-choice"><div class="choice-top"><span class="choice-number">03</span><span class="choice-icon green-icon">◎</span></div><h2>Certification</h2><p>Pantau hasil penilaian dan rekap sertifikasi mekanik.</p><div class="choice-actions"><button data-open-page="certification">Buka Certification <span>→</span></button></div></article>
+    </div><div class="module-note"><span>i</span><p><strong>Mode demo</strong> · Seluruh informasi yang tampil merupakan data contoh untuk pratinjau.</p></div><footer class="modules-footer">© 2026 PT Star Wagen Indonesia <span>People Development System · Mockup statis</span></footer></main>
+  </section>
+
+  <div class="app-shell" id="appShell" hidden>
     <aside class="sidebar" id="sidebar">
       <a class="brand" href="#overview" aria-label="Star Wagen People Development">
         <span class="brand-mark">SW</span>
@@ -33,7 +49,7 @@
       <header class="topbar">
         <button id="menuToggle" class="menu-toggle" aria-label="Buka menu">☰</button>
         <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong id="breadcrumbCurrent">Ringkasan</strong></div>
-        <div class="topbar-actions"><span class="demo-chip"><i></i> DATA DEMO</span><button class="icon-button" aria-label="Notifikasi">♧<em></em></button><div class="top-avatar">AD</div></div>
+        <div class="topbar-actions"><button class="module-return" id="returnToModules">▦ <span>Semua modul</span></button><span class="demo-chip"><i></i> DATA DEMO</span><button class="icon-button" aria-label="Notifikasi">♧<em></em></button><div class="top-avatar">AD</div></div>
       </header>
 
       <div class="content-wrap">
