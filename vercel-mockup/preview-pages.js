@@ -65,23 +65,30 @@ function renderCertification() {
   }));
 }
 
-const fleetDefaults = [{type:'SRT100',units:12,workload:1215,after:180,breakdown:35},{type:'Mercy',units:4,workload:1089.75,after:120,breakdown:20}];
+const unitTypes = {
+  ultra_large: {label:'Ultra Large Haul Truck & Excavator',description:'≥ 90 ton',models:'SANY SRT100S, SY600E',workload:1110},
+  large: {label:'Large Haul Truck & Excavator',description:'60–89 ton',models:'SANY SKT105S, SY510A, SW966E',workload:943},
+  medium: {label:'Medium Haul Truck & Excavator',description:'20–59 ton / kelas menengah',models:'SANY SY215E, AXOR AROCS, SW966E',workload:801},
+  roller: {label:'Road maintenance',description:'Road maintenance',models:'SV700TF, HV80ST, TS206',workload:681},
+  support: {label:'Tower lamp, Compressor, Generator',description:'Unit Support',models:'Atlas Copco HiLight B6+, XAHS38, QES30KD',workload:579}
+};
+const fleetDefaults = [{type:'ultra_large',units:0,after:0,breakdown:0}];
 const parameterDefaults = {hours_per_day:11,calendar_days:365,onsite_days:70,site_leave_days:14,workdays_per_cycle:13,off_cycle_days:14,development_days:14,annual_leave_days:12,emergency_leave_days:7};
 const parameterLabels = [['hours_per_day','Jam kerja per hari','jam/hari'],['calendar_days','Hari kalender','hari/tahun'],['onsite_days','Hari on-site per siklus','hari'],['site_leave_days','Cuti jobsite per siklus','hari'],['workdays_per_cycle','Hari kerja dalam siklus','hari'],['off_cycle_days','Panjang siklus roster','hari'],['development_days','Development / training','hari/tahun'],['annual_leave_days','Cuti tahunan','hari/tahun'],['emergency_leave_days','Emergency leave','hari/tahun']];
 function renderCalculator() {
   const page = document.querySelector('[data-page="calculator"]');
-  page.innerHTML = `<div class="local-intro mpp-intro"><p class="local-eyebrow">PERENCANAAN TENAGA KERJA</p><h1>Kalkulator MPP Mekanik</h1><p>Tambahkan jenis unit dan jumlahnya untuk menghitung kebutuhan manpower gabungan.</p></div><div class="local-mock-note">Simulasi browser · Hasil tidak disimpan dan seluruh nilai dapat diubah.</div><div class="mpp-local-layout"><section class="local-panel mpp-local-form"><p class="mpp-local-hint">Isi jumlah unit dan workload tahunan tiap jenis. Nilai default SRT100 1.215 dan Mercy 1.089,75 jam/unit/tahun.</p><label class="mpp-local-toggle"><span>Pilih periode workload</span><input id="additionalWorkloadToggle" type="checkbox"><span class="toggle-switch"><i>Warranty</i><i>After Warranty</i><b></b></span></label><div id="localFleetRows"></div><button class="local-outline-button" id="addLocalFleet">＋ Tambah jenis unit</button><details class="local-parameters"><summary>Lihat dan ubah parameter roster</summary><p>Parameter ini digunakan dalam rumus MPP. Nilai awal mengikuti kalkulator lokal.</p><div class="local-parameter-grid">${parameterLabels.map(([id,label,unit]) => `<label>${label}<small>${unit}</small><input id="param_${id}" type="number" min="0" step="any" value="${parameterDefaults[id]}"></label>`).join('')}</div></details><div class="local-calc-actions"><button id="runMppCalculation" class="local-red-button">Hitung kebutuhan MPP</button><button id="resetMppCalculation" class="local-outline-button">Reset ke parameter default</button></div><div class="local-info-note"><strong>Catatan workload</strong><span>Isi workload tahunan setiap jenis unit sesuai data aktual.</span></div><div class="local-info-note"><strong>Parameter roster</strong><span>11 jam kerja/hari · 70 hari on-site dan 14 hari cuti.</span></div><p id="mppError" class="local-calc-error" hidden></p></section><section class="local-panel mpp-local-result" id="mppResultPanel"><div class="mpp-empty-icon">MPP</div><h2>Hasil perhitungan tampil di sini</h2><p>Masukkan jumlah unit, lalu hitung kebutuhan mekanik.</p></section></div>`;
+  page.innerHTML = `<div class="local-intro mpp-intro"><p class="local-eyebrow">PERENCANAAN TENAGA KERJA</p><h1>Kalkulator MPP Mekanik</h1><p>Tambahkan jenis unit dan jumlahnya untuk menghitung kebutuhan manpower gabungan.</p></div><div class="local-mock-note">Simulasi browser · Hasil tidak disimpan dan Workload mengikuti kategori unit.</div><div class="mpp-local-layout"><section class="local-panel mpp-local-form"><p class="mpp-local-hint">Pilih kategori unit dan workload mengikuti pilihan</p><label class="mpp-local-toggle"><span>Pilih periode workload</span><input id="additionalWorkloadToggle" type="checkbox"><span class="toggle-switch"><i>Warranty</i><i>After Warranty</i><b></b></span></label><div id="localFleetRows"></div><button class="local-outline-button" id="addLocalFleet">＋ Tambah jenis unit</button><details class="local-parameters"><summary>Lihat dan ubah parameter roster</summary><p>Parameter ini digunakan dalam rumus MPP. Nilai awal mengikuti kalkulator lokal.</p><div class="local-parameter-grid">${parameterLabels.map(([id,label,unit]) => `<label>${label}<small>${unit}</small><input id="param_${id}" type="number" min="0" step="any" value="${parameterDefaults[id]}"></label>`).join('')}</div></details><div class="local-calc-actions"><button id="runMppCalculation" class="local-red-button">Hitung kebutuhan MPP</button><button id="resetMppCalculation" class="local-outline-button">Reset ke parameter default</button></div><div class="local-info-note"><strong>Catatan workload</strong><span>Workload tahunan ditentukan otomatis berdasarkan kategori unit.</span></div><div class="local-info-note"><strong>Parameter roster</strong><span>11 jam kerja/hari · 70 hari on-site dan 14 hari cuti.</span></div><p id="mppError" class="local-calc-error" hidden></p></section><section class="local-panel mpp-local-result" id="mppResultPanel"><div class="mpp-empty-icon">MPP</div><h2>Hasil perhitungan tampil di sini</h2><p>Masukkan jumlah unit, lalu hitung kebutuhan mekanik.</p></section></div>`;
   let fleet = structuredClone(fleetDefaults);
   const fleetHost = page.querySelector('#localFleetRows');
   const additionalToggle = page.querySelector('#additionalWorkloadToggle');
   const number = value => Number(value).toLocaleString('id-ID',{maximumFractionDigits:2});
   const renderFleet = () => {
-    fleetHost.innerHTML = fleet.map((row,index) => `<div class="local-fleet-row" data-fleet-index="${index}"><label>Jenis unit<select data-fleet="type"><option ${row.type === 'SRT100' ? 'selected' : ''}>SRT100</option><option ${row.type === 'Mercy' ? 'selected' : ''}>Mercy</option></select></label><label>Jumlah unit<input data-fleet="units" type="number" min="0" value="${row.units}"></label><label>Workload (jam/unit/tahun)<input data-fleet="workload" type="number" min="0.01" step="any" value="${row.workload}"></label><div class="local-additional-fields" ${additionalToggle.checked ? '' : 'hidden'}><label>After Warranty (jam/unit/tahun)<input data-fleet="after" type="number" min="0" step="any" value="${row.after}"></label><label>Unscheduled Breakdown (jam/unit/tahun)<input data-fleet="breakdown" type="number" min="0" step="any" value="${row.breakdown}"></label></div><button class="local-remove-fleet" data-remove-fleet="${index}" ${fleet.length === 1 ? 'disabled' : ''}>Hapus</button></div>`).join('');
+    fleetHost.innerHTML = fleet.map((row,index) => { const type = unitTypes[row.type]; return `<div class="local-fleet-row" data-fleet-index="${index}"><label>Jenis unit<select data-fleet="type">${Object.entries(unitTypes).map(([key,value]) => `<option value="${key}" ${row.type === key ? 'selected' : ''}>${value.label}</option>`).join('')}</select><small>${type.description} · ${type.models}</small></label><label>Jumlah unit<input data-fleet="units" type="number" min="0" value="${row.units}"></label><label>Workload (jam/unit/tahun)<input data-fleet="workload" type="number" value="${type.workload}" readonly></label><div class="local-additional-fields" ${additionalToggle.checked ? '' : 'hidden'}><label>After Warranty (jam/unit/tahun)<input data-fleet="after" type="number" min="0" step="any" value="${row.after}"></label><label>Unscheduled Breakdown (jam/unit/tahun)<input data-fleet="breakdown" type="number" min="0" step="any" value="${row.breakdown}"></label></div><button class="local-remove-fleet" data-remove-fleet="${index}" ${fleet.length === 1 ? 'disabled' : ''}>Hapus</button></div>`; }).join('');
     fleetHost.querySelectorAll('[data-fleet]').forEach(input => input.addEventListener('change', event => {
       const rowElement = event.target.closest('.local-fleet-row');
       const rowIndex = Number(rowElement.dataset.fleetIndex);
       const key = event.target.dataset.fleet;
-      if (key === 'type') { fleet[rowIndex].type = event.target.value; fleet[rowIndex].workload = event.target.value === 'Mercy' ? 1089.75 : 1215; renderFleet(); }
+      if (key === 'type') { fleet[rowIndex].type = event.target.value; renderFleet(); }
       else fleet[rowIndex][key] = Number(event.target.value);
     }));
     fleetHost.querySelectorAll('[data-remove-fleet]').forEach(button => button.addEventListener('click', () => { fleet.splice(Number(button.dataset.removeFleet),1); renderFleet(); }));
@@ -90,7 +97,7 @@ function renderCalculator() {
     fleetHost.querySelectorAll('.local-additional-fields').forEach(fields => fields.hidden = !additionalToggle.checked);
     page.querySelectorAll('.mpp-local-toggle .toggle-switch').forEach(toggle => toggle.classList.toggle('after-active', additionalToggle.checked));
   });
-  page.querySelector('#addLocalFleet').addEventListener('click', () => { fleet.push({type:'SRT100',units:0,workload:1215,after:0,breakdown:0}); renderFleet(); });
+  page.querySelector('#addLocalFleet').addEventListener('click', () => { fleet.push({type:'ultra_large',units:0,after:0,breakdown:0}); renderFleet(); });
   page.querySelector('#resetMppCalculation').addEventListener('click', () => {
     fleet = structuredClone(fleetDefaults); additionalToggle.checked = false;
     page.querySelectorAll('.local-parameter-grid input').forEach(input => input.value = parameterDefaults[input.id.slice(6)]);
@@ -101,7 +108,7 @@ function renderCalculator() {
   });
   page.querySelector('#runMppCalculation').addEventListener('click', () => {
     const params = Object.fromEntries(parameterLabels.map(([key]) => [key,Number(page.querySelector(`#param_${key}`).value)]));
-    const invalid = Object.values(params).some(value => !Number.isFinite(value) || value < 0) || fleet.some(row => !Number.isFinite(row.units) || row.units < 0 || !Number.isFinite(row.workload) || row.workload <= 0 || row.after < 0 || row.breakdown < 0);
+    const invalid = Object.values(params).some(value => !Number.isFinite(value) || value < 0) || fleet.some(row => !unitTypes[row.type] || !Number.isFinite(row.units) || row.units < 0 || row.after < 0 || row.breakdown < 0);
     const onsiteCycle = params.onsite_days + params.site_leave_days;
     const onsiteDays = params.calendar_days * params.onsite_days / onsiteCycle;
     const rosterDays = onsiteDays * params.workdays_per_cycle / params.off_cycle_days;
@@ -110,7 +117,7 @@ function renderCalculator() {
     const error = page.querySelector('#mppError');
     if (invalid || !onsiteCycle || !params.off_cycle_days || effectiveHours <= 0) { error.textContent = 'Periksa nilai parameter. Roster harus menghasilkan jam kerja efektif lebih dari 0.'; error.hidden = false; return; }
     error.hidden = true;
-    const rows = fleet.map(row => { const extra = additionalToggle.checked ? row.after + row.breakdown : 0; const total = row.units * (row.workload + extra); return {...row,total,share:total/effectiveHours}; });
+    const rows = fleet.map(row => { const workload = unitTypes[row.type].workload; const extra = additionalToggle.checked ? row.after + row.breakdown : 0; const total = row.units * (workload + extra); return {...row,workload,total,share:total/effectiveHours}; });
     const units = rows.reduce((sum,row) => sum + row.units,0);
     const base = rows.reduce((sum,row) => sum + row.units*row.workload,0);
     const after = additionalToggle.checked ? rows.reduce((sum,row) => sum + row.units*row.after,0) : 0;
