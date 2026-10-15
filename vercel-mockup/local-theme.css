@@ -1,0 +1,22 @@
+/* Match the dark navy and cyan visual language used by the local PHP pages. */
+.app-shell .sidebar,
+.app-shell > .main-content > .topbar { display:none!important; }
+.app-shell .main-content { margin-left:0; }
+.app-shell .content-wrap { width:min(1220px,calc(100% - 40px)); max-width:none; margin:0 auto; padding-top:28px; }
+.app-shell { color:#e8eef7; background:radial-gradient(ellipse at 15% 0%,#172945 0,transparent 42%),#0b1220; }
+.app-shell .demo-banner { border-color:#30445c; background:#111d2e; color:#aab9cd; }
+.app-shell .demo-banner strong,.app-shell .page-heading h1,.app-shell .panel-heading h2,.app-shell .stat-value { color:#edf5ff; }
+.app-shell .page-heading .eyebrow,.app-shell .eyebrow { color:#67c6df; }
+.app-shell .subheading,.app-shell .panel-heading p,.app-shell .stat-top,.app-shell .stat-foot,
+.app-shell .page-footer,.app-shell td,.app-shell .training-card p,.app-shell .training-meta { color:#9cabc1; }
+.app-shell .stat-card,.app-shell .panel,.app-shell .training-card { border-color:#25354c; background:linear-gradient(145deg,#142238,#101a2a); box-shadow:0 14px 36px #02071130; }
+.app-shell th,.app-shell thead { background:#101b2b; color:#93a5bc; }
+.app-shell td { border-color:#213047; }
+.app-shell .result-card { background:linear-gradient(145deg,#142238,#101a2a); border:1px solid #31465f; }
+.app-shell .primary-button,.app-shell .calculate-button { background:#12384a; border:1px solid #32748b; color:#e5f8ff; }
+.app-shell input,.app-shell select,.app-shell .search-box { border-color:#34455d; background:#0d1726; color:#e8eef7; }
+.app-shell .back-to-modules { display:inline-flex; align-items:center; margin:0 0 16px; padding:8px 12px; border:1px solid #34465e; border-radius:9px; background:#121e30; color:#e2ebf7; cursor:pointer; }
+.app-shell .back-to-modules:hover { border-color:#65bfda; }
+.modules-screen .modules-topbar,.modules-screen .modules-content { font-family:Inter,'DM Sans',sans-serif; }
+.flow-screen[hidden],.app-shell[hidden],.page-view[hidden] { display:none!important; }
+@media(max-width:580px) { .app-shell .content-wrap { width:calc(100% - 28px); padding-top:16px; } }

@@ -31,6 +31,11 @@ document.querySelector('#returnToModules').addEventListener('click', () => {
   document.querySelector('#modulesScreen').hidden = false;
   document.querySelector('#modulesScreen').classList.add('active');
 });
+document.querySelector('#backToModules').addEventListener('click', () => {
+  appShell.hidden = true;
+  document.querySelector('#modulesScreen').hidden = false;
+  document.querySelector('#modulesScreen').classList.add('active');
+});
 function returnToLogin() {
   appShell.hidden = true;
   document.querySelector('#modulesScreen').hidden = true;
