@@ -3,7 +3,9 @@ const pages = [...document.querySelectorAll('.page-view')];
 const pageNames = { overview: 'Ringkasan', manpower: 'Man Power', certification: 'Certification', training: 'Training', calculator: 'Kalkulator MPP' };
 const appShell = document.querySelector('#appShell');
 function openModule(name) {
+  document.querySelector('#loginScreen').hidden = true;
   document.querySelector('#loginScreen').classList.remove('active');
+  document.querySelector('#modulesScreen').hidden = true;
   document.querySelector('#modulesScreen').classList.remove('active');
   appShell.hidden = false;
   showPage(name);
@@ -12,7 +14,10 @@ document.querySelector('#demoLoginForm').addEventListener('submit', event => {
   event.preventDefault();
   const username = document.querySelector('#demoUsername').value.trim() || 'Admin Demo';
   document.querySelector('#moduleUsername').textContent = username;
+  appShell.hidden = true;
+  document.querySelector('#loginScreen').hidden = true;
   document.querySelector('#loginScreen').classList.remove('active');
+  document.querySelector('#modulesScreen').hidden = false;
   document.querySelector('#modulesScreen').classList.add('active');
 });
 document.querySelector('#togglePassword').addEventListener('click', event => {
@@ -23,16 +28,28 @@ document.querySelector('#togglePassword').addEventListener('click', event => {
 document.querySelectorAll('[data-open-page]').forEach(button => button.addEventListener('click', () => openModule(button.dataset.openPage)));
 document.querySelector('#returnToModules').addEventListener('click', () => {
   appShell.hidden = true;
+  document.querySelector('#modulesScreen').hidden = false;
   document.querySelector('#modulesScreen').classList.add('active');
 });
 function returnToLogin() {
   appShell.hidden = true;
+  document.querySelector('#modulesScreen').hidden = true;
   document.querySelector('#modulesScreen').classList.remove('active');
+  document.querySelector('#loginScreen').hidden = false;
   document.querySelector('#loginScreen').classList.add('active');
 }
 document.querySelector('#logoutFromModules').addEventListener('click', returnToLogin);
 function showPage(name) {
-  pages.forEach(page => page.classList.toggle('visible', page.dataset.page === name));
+  pages.forEach(page => {
+    const active = page.dataset.page === name;
+    page.hidden = !active;
+    page.classList.toggle('visible', active);
+  });
+  document.querySelector('#modulesScreen').hidden = true;
+  document.querySelector('#modulesScreen').classList.remove('active');
+  document.querySelector('#loginScreen').hidden = true;
+  document.querySelector('#loginScreen').classList.remove('active');
+  appShell.hidden = false;
   navButtons.forEach(button => button.classList.toggle('active', button.dataset.view === name));
   document.querySelector('#breadcrumbCurrent').textContent = pageNames[name] || 'Ringkasan';
   document.querySelector('#sidebar').classList.remove('open');
