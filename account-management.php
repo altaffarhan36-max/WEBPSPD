@@ -239,6 +239,9 @@ $unassignedMechanics = $database->query(
      ORDER BY m.technician_name'
 )->fetchAll();
 $roleLabels = ['master' => 'Master', 'admin' => 'Admin', 'mechanic' => 'Mekanik', 'gl' => 'GL'];
+$toolbarTitle = 'Account Management';
+$toolbarUserLabel = (string) $identity['username'] . ' · Master';
+$toolbarActions = [['href' => 'modules.php', 'label' => 'Kembali ke Pilih Modul']];
 ?>
 <!doctype html>
 <html lang="id">
@@ -248,20 +251,11 @@ $roleLabels = ['master' => 'Master', 'admin' => 'Admin', 'mechanic' => 'Mekanik'
   <title>Account Management | PT Star Wagen Indonesia</title>
   <link rel="stylesheet" href="assets/css/dashboard.css">
   <link rel="stylesheet" href="assets/css/account-management.css">
+  <link rel="stylesheet" href="assets/css/toolbar.css?v=20261015">
 </head>
 <body class="account-management-page">
   <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="modules.php" aria-label="Kembali ke pilihan modul">
-        <img class="brand-logo" src="assets/star-wagen-logo.png" alt="">
-        <span><strong>PT Star Wagen Indonesia</strong><small>Account Management</small></span>
-      </a>
-      <div class="account">
-        <span><?= $escape($identity['username']) ?> · Master</span>
-        <a class="module-access" href="modules.php">Kembali ke modul</a>
-        <form action="logout.php" method="post"><input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['csrf_token']) ?>"><button type="submit" class="logout">Keluar</button></form>
-      </div>
-    </header>
+    <?php require __DIR__ . '/views/topbar.php'; ?>
 
     <section class="intro account-management-intro">
       <p class="eyebrow">Pengelolaan akses</p>

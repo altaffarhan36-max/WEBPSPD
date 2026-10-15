@@ -310,6 +310,13 @@ $criteriaSummary = [
     ['status_sp', 'SP selama TLU', 'disciplinary_letters', 'jumlah'],
     ['status_tlu', 'Kompetensi lulus TLU', 'tlu_competencies_passed', 'kompetensi'],
 ];
+$displayRole = $identity['role'] ?? ($_SESSION['role'] ?? 'mechanic');
+$toolbarTitle = 'Product Support · People Development';
+$toolbarRoleLabel = in_array($displayRole, ['master', 'admin'], true)
+    ? 'Master'
+    : ($displayRole === 'gl' ? 'GL ' . ($identity['gl_name'] ?? '') . ' · ' . ($identity['gl_site'] ?? '') : 'Mekanik');
+$toolbarUserLabel = (string) ($_SESSION['username'] ?? 'Pengguna') . ' · ' . $toolbarRoleLabel;
+$toolbarActions = [['href' => 'modules.php', 'label' => 'Kembali ke Pilih Modul']];
 ?>
 <!doctype html>
 <html lang="id">
@@ -318,24 +325,11 @@ $criteriaSummary = [
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sertifikasi Mekanik | PT Star Wagen Indonesia</title>
   <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/toolbar.css?v=20261015">
 </head>
 <body>
   <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="modules.php" aria-label="Kembali ke pilihan modul">
-        <img class="brand-logo" src="assets/star-wagen-logo.png" alt="">
-        <span><strong>PT Star Wagen Indonesia</strong><small>Product Support · People Development</small></span>
-      </a>
-      <div class="account">
-        <?php $displayRole = $identity['role'] ?? ($_SESSION['role'] ?? 'mechanic'); ?>
-        <span><?= $escape($_SESSION['username'] ?? 'Pengguna') ?> · <?= in_array($displayRole, ['master', 'admin'], true) ? 'Master' : ($displayRole === 'gl' ? 'GL ' . ($identity['gl_name'] ?? '') . ' · ' . ($identity['gl_site'] ?? '') : 'Mekanik') ?></span>
-        <a class="module-access" href="modules.php">&larr; Kembali ke Pilih Modul</a>
-        <form action="logout.php" method="post">
-          <input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['csrf_token'] ?? '') ?>">
-          <button type="submit" class="logout">Keluar</button>
-        </form>
-      </div>
-    </header>
+    <?php require __DIR__ . '/views/topbar.php'; ?>
 
     <?php if ($databaseError): ?>
       <div class="notice error" role="alert">Data sertifikasi belum dapat dimuat. Pastikan seluruh migrasi database, termasuk migrasi site mechanic dan GL, sudah dijalankan.</div>

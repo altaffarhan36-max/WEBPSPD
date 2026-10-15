@@ -1,0 +1,54 @@
+.app-topbar {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px minmax(180px, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(100deg, #111 0%, #777 100%);
+  color: #fff;
+}
+.app-topbar .app-brand { display: flex; width: 64px; min-width: 64px; align-items: center; justify-content: center; }
+.app-topbar .brand-logo { display: block; width: 58px; height: 58px; flex: 0 0 58px; border: 0; border-radius: 6px; background: #fff; object-fit: contain; }
+.app-topbar-title { overflow: hidden; color: #fff; font-size: .94rem; font-weight: 800; letter-spacing: .08em; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.app-topbar-account { display: flex; align-items: center; justify-content: flex-end; gap: 8px; color: #fff; font-size: .82rem; }
+.app-topbar-user { flex: 0 0 auto; white-space: nowrap; }
+.app-topbar-actions { display: flex; align-items: center; gap: 8px; }
+.app-topbar .module-access,
+.app-topbar .module-access:first-of-type { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 12px; border: 1px solid #ffffff70; border-radius: 9px; background: #ffffff18; color: #fff; font-size: .82rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.app-topbar .module-access:hover { border-color: #fff; background: #ffffff30; color: #fff; }
+.app-topbar-logout { margin: 0; }
+.app-topbar .logout { min-height: 40px; padding: 8px 14px; border: 1px solid #ffffff70; border-radius: 9px; background: #ffffff18; color: #fff; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.app-topbar .logout:hover { border-color: #fff; background: #ffffff30; color: #fff; }
+.module-page .app-topbar,
+.manpower-page .app-topbar,
+.account-management-page .app-topbar,
+.mpp-page .app-topbar { grid-template-columns: 64px minmax(180px, 1fr) auto; gap: 14px; min-height: 76px; padding: 8px 18px; border: 0; border-radius: 0 0 12px 12px; background: linear-gradient(100deg, #111 0%, #777 100%); color: #fff; }
+.manpower-page .app-topbar::after { display: none; }
+.account-management-page .app-topbar .module-access,
+.account-management-page .app-topbar .module-access:first-of-type,
+.account-management-page .app-topbar .logout { border-color: #ffffff70; background: #ffffff18; color: #fff; }
+
+@media (max-width: 900px) {
+  .app-topbar { grid-template-columns: 58px minmax(0, 1fr); gap: 8px 12px; padding: 8px 14px; }
+  .mpp-page .app-topbar { grid-template-columns: 58px minmax(0, 1fr); gap: 8px 12px; padding: 8px 14px; }
+  .app-topbar .app-brand { grid-column: 1; grid-row: 1; }
+  .app-topbar-title { grid-column: 2; grid-row: 1; text-align: right; }
+  .app-topbar-account { grid-column: 1 / -1; flex-wrap: wrap; }
+  .app-topbar-actions { flex-wrap: wrap; justify-content: flex-end; }
+}
+@media (max-width: 520px) {
+  .app-topbar { padding: 8px 10px; }
+  .account-management-page .app-topbar { align-items: center; gap: 8px 10px; padding: 8px 10px; }
+  .app-topbar .brand-logo { width: 48px; height: 48px; flex-basis: 48px; }
+  .app-topbar-title { font-size: .76rem; letter-spacing: .04em; }
+  .app-topbar-account { gap: 6px; font-size: .74rem; }
+  .app-topbar-user { display: none; }
+  .app-topbar-actions { gap: 5px; }
+  .app-topbar .module-access,
+  .app-topbar .module-access:first-of-type,
+  .app-topbar .logout { min-height: 34px; padding: 6px 8px; font-size: .7rem; }
+}

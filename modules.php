@@ -8,7 +8,11 @@ $_SESSION['csrf_token'] ??= bin2hex(random_bytes(32));
 
 $role = (string) ($_SESSION['role'] ?? '');
 $canAccessManpower = in_array($role, ['master', 'admin'], true);
-$username = htmlspecialchars((string) ($_SESSION['username'] ?? 'Pengguna'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$toolbarTitle = 'Product Support · People Development';
+$toolbarUserLabel = (string) ($_SESSION['username'] ?? 'Pengguna');
+$toolbarActions = $canAccessManpower
+    ? [['href' => 'manpower.php', 'label' => 'Monitoring Man Power'], ['href' => 'kalkulator-mpp.php', 'label' => 'Kalkulator MPP']]
+    : [];
 ?>
 <!doctype html>
 <html lang="id">
@@ -42,16 +46,11 @@ $username = htmlspecialchars((string) ($_SESSION['username'] ?? 'Pengguna'), ENT
     @media (max-width: 520px) { .account-builder-link { bottom: 12px; left: 12px; } }
     @media (max-width: 760px) { .module-grid { grid-template-columns: 1fr; } .module-hero { margin-top: 28px; padding: 28px 24px; } .module-card { min-height: 190px; } }
   </style>
+  <link rel="stylesheet" href="assets/css/toolbar.css?v=20261015">
 </head>
 <body class="module-page">
   <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="modules.php" aria-label="Beranda modul PT Star Wagen Indonesia">
-        <img class="brand-logo" src="assets/star-wagen-logo.png" alt="">
-        <span><strong>PT Star Wagen Indonesia</strong><small>Product Support · People Development</small></span>
-      </a>
-      <div class="account"><span><?= $username ?></span><form action="logout.php" method="post"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string) ($_SESSION['csrf_token'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"><button type="submit" class="logout">Keluar</button></form></div>
-    </header>
+    <?php require __DIR__ . '/views/topbar.php'; ?>
     <section class="module-hero">
       <p class="eyebrow">People Development System</p>
       <h1>Pilih Modul</h1>

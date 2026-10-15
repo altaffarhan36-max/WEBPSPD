@@ -5,17 +5,24 @@ require_once __DIR__ . '/auth/session.php';
 requireAdmin();
 
 $escape = static fn(mixed $value): string => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-$availableUnitTypes = ['SRT100', 'Mercy'];
+$unitTypes = [
+    'ultra_large' => ['label' => 'Ultra Large Haul Truck & Excavator', 'description' => '≥ 90 ton', 'models' => 'SANY SRT100S, SY600E', 'workload' => 1110],
+    'large' => ['label' => 'Large Haul Truck & Excavator', 'description' => '60–89 ton', 'models' => 'SANY SKT105S, SY510A, SW966E', 'workload' => 943],
+    'medium' => ['label' => 'Medium Haul Truck & Excavator', 'description' => '20–59 ton / kelas menengah', 'models' => 'SANY SY215E, AXOR AROCS, SW966E', 'workload' => 801],
+    'roller' => ['label' => 'Roller / Compactor', 'description' => 'Road maintenance', 'models' => 'SV700TF, HV80ST, TS206', 'workload' => 681],
+    'support' => ['label' => 'Tower lamp, Compressor, Generator', 'description' => 'Unit Support', 'models' => 'Atlas Copco HiLight B6+, XAHS38, QES30KD', 'workload' => 579],
+];
+$availableUnitTypes = array_keys($unitTypes);
 $includeAdditional = ($_POST['include_additional'] ?? '') === '1';
 $fleetRows = [];
 $submittedFleet = $_POST['fleet'] ?? null;
 if (is_array($submittedFleet)) {
     foreach ($submittedFleet as $row) {
         if (is_array($row)) {
-            $rowType = (string) ($row['type'] ?? 'SRT100');
-            $defaultWorkload = $rowType === 'Mercy' ? '1089.75' : '1215';
+            $rowType = (string) ($row['type'] ?? 'ultra_large');
+            $defaultWorkload = (string) ($unitTypes[$rowType]['workload'] ?? $unitTypes['ultra_large']['workload']);
             $fleetRows[] = [
-                'type' => $rowType,
+                'type' => isset($unitTypes[$rowType]) ? $rowType : 'ultra_large',
                 'units' => trim((string) ($row['units'] ?? '0')),
                 'workload' => trim((string) ($row['workload'] ?? $row['before_workload'] ?? $defaultWorkload)),
                 'after_workload' => trim((string) ($row['after_workload'] ?? '0')),
@@ -25,7 +32,7 @@ if (is_array($submittedFleet)) {
     }
 }
 if ($fleetRows === []) {
-    $fleetRows = [['type' => 'SRT100', 'units' => '0', 'workload' => '1215', 'after_workload' => '0', 'breakdown_workload' => '0']];
+    $fleetRows = [['type' => 'ultra_large', 'units' => '0', 'workload' => '1110', 'after_workload' => '0', 'breakdown_workload' => '0']];
 }
 $defaults = [
     'hours_per_day' => 11,
@@ -74,12 +81,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $action !== 'reset') {
     $afterWorkload = 0.0;
     $breakdownWorkload = 0.0;
     foreach ($fleetRows as $row) {
-        if (!in_array($row['type'], $availableUnitTypes, true) || $row['units'] === '' || !ctype_digit($row['units']) || (float) $row['units'] > 1000000 || !is_numeric($row['workload']) || (float) $row['workload'] <= 0 || (float) $row['workload'] > 1000000 || ($includeAdditional && (!is_numeric($row['after_workload']) || (float) $row['after_workload'] < 0 || (float) $row['after_workload'] > 1000000 || !is_numeric($row['breakdown_workload']) || (float) $row['breakdown_workload'] < 0 || (float) $row['breakdown_workload'] > 1000000))) {
-            $error = 'Periksa jenis unit, jumlah bilangan bulat dari 0 sampai 1.000.000, dan workload tahunan yang lebih dari 0.';
+        if (!in_array($row['type'], $availableUnitTypes, true) || $row['units'] === '' || !ctype_digit($row['units']) || (float) $row['units'] > 1000000 || ($includeAdditional && (!is_numeric($row['after_workload']) || (float) $row['after_workload'] < 0 || (float) $row['after_workload'] > 1000000 || !is_numeric($row['breakdown_workload']) || (float) $row['breakdown_workload'] < 0 || (float) $row['breakdown_workload'] > 1000000))) {
+            $error = 'Periksa kategori unit, jumlah unit bilangan bulat dari 0 sampai 1.000.000, dan nilai workload tambahan.';
             break;
         }
         $row['units'] = (int) $row['units'];
-        $row['workload'] = (float) $row['workload'];
+        $row['workload'] = (float) $unitTypes[$row['type']]['workload'];
         $row['after_workload'] = $includeAdditional ? (float) $row['after_workload'] : 0.0;
         $row['breakdown_workload'] = $includeAdditional ? (float) $row['breakdown_workload'] : 0.0;
         $row['base_total'] = $row['units'] * $row['workload'];
@@ -145,6 +152,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $action !== 'reset') {
 
 $formatNumber = static fn(float|int $value, int $decimals = 0): string => number_format((float) $value, $decimals, ',', '.');
 $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format((float) $value, 4, '.', ''), '0'), '.');
+$toolbarTitle = 'MANPOWER PLANNING CALCULATOR';
+$toolbarUserLabel = (string) ($_SESSION['username'] ?? 'Administrator') . ' · Master';
+$toolbarActions = [
+    ['href' => 'modules.php', 'label' => 'Kembali ke Pilih Modul'],
+    ['href' => 'manpower.php', 'label' => 'Monitoring Man Power'],
+];
 ?>
 <!doctype html>
 <html lang="id">
@@ -152,32 +165,24 @@ $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kalkulator MPP | PT Star Wagen Indonesia</title>
-  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css?v=20261015-mpp-toolbar">
+  <link rel="stylesheet" href="assets/css/toolbar.css?v=20261015">
 </head>
 <body class="mpp-page">
   <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="modules.php" aria-label="Kembali ke pilihan modul">
-        <img class="brand-logo" src="assets/star-wagen-logo.png" alt="">
-        <span><strong>PT Star Wagen Indonesia</strong><small>Kalkulator Man Power Planning</small></span>
-      </a>
-      <div class="account">
-        <span><?= $escape($_SESSION['username'] ?? 'Administrator') ?> · Master</span>
-        <a class="module-access" href="modules.php">&larr; Kembali ke Pilih Modul</a>
-        <a class="module-access" href="manpower.php">Monitoring Man Power</a>
-      </div>
-    </header>
+    <?php require __DIR__ . '/views/topbar.php'; ?>
 
     <section class="mpp-hero">
       <p class="eyebrow">Perencanaan tenaga kerja</p>
       <h1>Kalkulator MPP Mekanik</h1>
-      <p>Tambahkan jenis unit dan jumlahnya untuk menghitung kebutuhan manpower gabungan.</p>
+      <p>Tambahkan kategori unit dan jumlahnya untuk menghitung kebutuhan manpower gabungan.</p>
     </section>
+
+    <div class="mpp-notice" role="note">Simulasi browser · Hasil perhitungan tidak disimpan.</div>
 
     <section class="mpp-layout" aria-label="Kalkulator MPP beberapa jenis unit">
       <form class="panel mpp-form" method="post">
-
-        <p class="mpp-hint">Isi jumlah unit dan workload tahunan tiap jenis. Nilai default SRT100 1.215 dan Mercy 1.089,75 jam/unit/tahun.</p>
+        <p class="mpp-hint">Pilih kategori unit dan workload mengikuti pilihan</p>
         <label class="mpp-toggle" for="include-additional">
           <span class="mpp-toggle-copy">Pilih periode workload</span>
           <input id="include-additional" type="checkbox" name="include_additional" value="1" <?= $includeAdditional ? 'checked' : '' ?>>
@@ -188,16 +193,17 @@ $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format(
             <div class="mpp-fleet-row">
               <label>Jenis unit
                 <select name="fleet[<?= (int) $index ?>][type]">
-                  <?php foreach ($availableUnitTypes as $availableUnitType): ?>
-                    <option value="<?= $escape($availableUnitType) ?>" data-default-workload="<?= $availableUnitType === 'Mercy' ? '1089.75' : '1215' ?>" <?= $row['type'] === $availableUnitType ? 'selected' : '' ?>><?= $escape($availableUnitType) ?></option>
+                  <?php foreach ($unitTypes as $unitTypeKey => $unitType): ?>
+                    <option value="<?= $escape($unitTypeKey) ?>" data-default-workload="<?= $escape($unitType['workload']) ?>" data-description="<?= $escape($unitType['description']) ?>" data-models="<?= $escape($unitType['models']) ?>" <?= $row['type'] === $unitTypeKey ? 'selected' : '' ?>><?= $escape($unitType['label']) ?></option>
                   <?php endforeach; ?>
                 </select>
               </label>
+              <p class="mpp-hint mpp-unit-details"><?= $unitTypes[$row['type']]['description'] !== '' ? $escape($unitTypes[$row['type']]['description']) . ' · ' : '' ?><?= $escape($unitTypes[$row['type']]['models']) ?></p>
               <label>Jumlah unit
                 <input name="fleet[<?= (int) $index ?>][units]" type="number" min="0" max="1000000" step="1" value="<?= $escape($row['units']) ?>" required>
               </label>
               <label>Workload (jam/unit/tahun)
-                <input name="fleet[<?= (int) $index ?>][workload]" type="number" min="0.01" max="1000000" step="any" value="<?= $escape($row['workload']) ?>" required>
+                <input name="fleet[<?= (int) $index ?>][workload]" type="number" value="<?= $escape($unitTypes[$row['type']]['workload']) ?>" readonly>
               </label>
               <div class="mpp-additional-workloads" <?= $includeAdditional ? '' : 'hidden' ?>>
                 <label>After Warranty (jam/unit/tahun)
@@ -212,7 +218,7 @@ $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format(
           <?php endforeach; ?>
         </div>
         <button class="mpp-reset" id="addFleetRow" type="button">+ Tambah jenis unit</button>
-        <details class="mpp-parameters" <?= $action === 'calculate' ? 'open' : '' ?>>
+        <details class="mpp-parameters">
           <summary>Lihat dan ubah parameter roster</summary>
           <p>Parameter ini digunakan dalam rumus MPP. Nilai awal mengikuti Book1.xlsx.</p>
           <div class="mpp-parameter-grid">
@@ -232,7 +238,7 @@ $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format(
         <div class="mpp-note"><strong>Parameter roster</strong><span><?= $formatNumber($parameters['hours_per_day']) ?> jam kerja/hari · <?= $formatNumber($parameters['onsite_days']) ?> hari on-site dan <?= $formatNumber($parameters['site_leave_days']) ?> hari cuti.</span></div>
       </form>
 
-      <section class="panel mpp-result" aria-live="polite">
+      <section class="panel mpp-result<?= $result === null ? ' mpp-result-empty' : '' ?>" aria-live="polite">
         <?php if ($result !== null): ?>
           <p class="mpp-result-label">Kebutuhan mekanik</p>
           <p class="mpp-total"><strong><?= $formatNumber($result['manpower']) ?></strong><span>orang</span></p>
@@ -252,13 +258,13 @@ $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format(
           <h2>Rincian per jenis unit</h2>
           <div class="mpp-breakdown">
             <?php foreach ($result['fleet'] as $row): ?>
-              <div><span><?= $escape($row['type']) ?> &middot; <?= $formatNumber($row['units']) ?> unit &times; <?= $formatNumber($row['workload']) ?> jam/unit<?php if ($result['include_additional']): ?> + <?= $formatNumber($row['after_workload']) ?> After Warranty + <?= $formatNumber($row['breakdown_workload']) ?> Unscheduled Breakdown<?php endif; ?></span><strong><?= $formatNumber($row['total_workload']) ?> jam/tahun &middot; <?= $formatNumber($row['manpower_share'], 2) ?> orang ekuivalen</strong></div>
+              <div><span><?= $escape($unitTypes[$row['type']]['label']) ?> &middot; <?= $formatNumber($row['units']) ?> unit &times; <?= $formatNumber($row['workload']) ?> jam/unit<?php if ($result['include_additional']): ?> + <?= $formatNumber($row['after_workload']) ?> After Warranty + <?= $formatNumber($row['breakdown_workload']) ?> Unscheduled Breakdown<?php endif; ?></span><strong><?= $formatNumber($row['total_workload']) ?> jam/tahun &middot; <?= $formatNumber($row['manpower_share'], 2) ?> orang ekuivalen</strong></div>
             <?php endforeach; ?>
           </div>
         <?php else: ?>
           <div class="mpp-empty-icon" aria-hidden="true">MPP</div>
           <h2>Hasil perhitungan tampil di sini</h2>
-          <p>Masukkan jumlah SRT100, Mercy, atau beberapa jenis unit sekaligus.</p>
+          <p>Pilih kategori unit, masukkan jumlah unit, atau tambahkan beberapa kategori sekaligus.</p>
         <?php endif; ?>
       </section>
     </section>
@@ -274,14 +280,20 @@ $formatInput = static fn(float|int $value): string => rtrim(rtrim(number_format(
     fleetRows.addEventListener('change', (event) => {
       if (event.target.matches('select[name$="[type]"]')) {
         const workloadInput = event.target.closest('.mpp-fleet-row').querySelector('input[name$="[workload]"]');
-        workloadInput.value = event.target.selectedOptions[0].dataset.defaultWorkload;
+        const selectedUnit = event.target.selectedOptions[0];
+        workloadInput.value = selectedUnit.dataset.defaultWorkload;
+        const unitDetails = event.target.closest('.mpp-fleet-row').querySelector('.mpp-unit-details');
+        unitDetails.classList.remove('is-changing');
+        void unitDetails.offsetWidth;
+        unitDetails.textContent = [selectedUnit.dataset.description, selectedUnit.dataset.models].filter(Boolean).join(' · ');
+        unitDetails.classList.add('is-changing');
       }
     });
     document.getElementById('addFleetRow').addEventListener('click', () => {
       const index = Number(fleetRows.dataset.nextIndex++);
       const row = document.createElement('div');
       row.className = 'mpp-fleet-row';
-      row.innerHTML = `<label>Jenis unit<select name="fleet[${index}][type]"><option value="SRT100" data-default-workload="1215">SRT100</option><option value="Mercy" data-default-workload="1089.75">Mercy</option></select></label><label>Jumlah unit<input name="fleet[${index}][units]" type="number" min="0" max="1000000" step="1" value="0" required></label><label>Workload (jam/unit/tahun)<input name="fleet[${index}][workload]" type="number" min="0.01" max="1000000" step="any" value="1215" required></label><div class="mpp-additional-workloads" hidden><label>After Warranty (jam/unit/tahun)<input name="fleet[${index}][after_workload]" type="number" min="0" max="1000000" step="any" value="0"></label><label>Unscheduled Breakdown (jam/unit/tahun)<input name="fleet[${index}][breakdown_workload]" type="number" min="0" max="1000000" step="any" value="0"></label></div><button class="mpp-remove-row" type="button" aria-label="Hapus baris unit">Hapus</button>`;
+      row.innerHTML = `<label>Jenis unit<select name="fleet[${index}][type]"><option value="ultra_large" data-default-workload="1110" data-description="≥ 90 ton" data-models="SANY SRT100S, SY600E">Ultra Large Haul Truck & Excavator</option><option value="large" data-default-workload="943" data-description="60–89 ton" data-models="SANY SKT105S, SY510A, SW966E">Large Haul Truck & Excavator</option><option value="medium" data-default-workload="801" data-description="20–59 ton / kelas menengah" data-models="SANY SY215E, AXOR AROCS, SW966E">Medium Haul Truck & Excavator</option><option value="roller" data-default-workload="681" data-description="Road maintenance" data-models="SV700TF, HV80ST, TS206">Roller / Compactor</option><option value="support" data-default-workload="579" data-description="Unit Support" data-models="Atlas Copco HiLight B6+, XAHS38, QES30KD">Tower lamp, Compressor, Generator</option></select></label><p class="mpp-hint mpp-unit-details">≥ 90 ton · SANY SRT100S, SY600E</p><label>Jumlah unit<input name="fleet[${index}][units]" type="number" min="0" max="1000000" step="1" value="0" required></label><label>Workload (jam/unit/tahun)<input name="fleet[${index}][workload]" type="number" value="1110" readonly></label><div class="mpp-additional-workloads" hidden><label>After Warranty (jam/unit/tahun)<input name="fleet[${index}][after_workload]" type="number" min="0" max="1000000" step="any" value="0"></label><label>Unscheduled Breakdown (jam/unit/tahun)<input name="fleet[${index}][breakdown_workload]" type="number" min="0" max="1000000" step="any" value="0"></label></div><button class="mpp-remove-row" type="button" aria-label="Hapus baris unit">Hapus</button>`;
       row.querySelector('.mpp-additional-workloads').hidden = !additionalToggle.checked;
       fleetRows.appendChild(row);
     });

@@ -6,6 +6,9 @@ require_once __DIR__ . '/api/database.php';
 requireAdmin();
 
 $escape = static fn(mixed $value): string => htmlspecialchars((string) ($value ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$toolbarTitle = 'Monitoring Man Power';
+$toolbarUserLabel = (string) ($_SESSION['username'] ?? 'Administrator') . ' · Master';
+$toolbarActions = [['href' => 'modules.php', 'label' => 'Kembali ke Pilih Modul']];
 $view = (string) ($_GET['view'] ?? 'monitoring');
 if (!in_array($view, ['monitoring', 'all'], true)) {
     $view = 'monitoring';
@@ -51,23 +54,11 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monitoring Man Power | PT Star Wagen Indonesia</title>
   <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/toolbar.css?v=20261015">
 </head>
 <body class="manpower-page">
   <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="manpower.php" aria-label="PT Star Wagen Indonesia - Monitoring Man Power">
-        <img class="brand-logo" src="assets/star-wagen-logo.png" alt="">
-        <span><strong>PT Star Wagen Indonesia</strong><small>Monitoring Man Power</small></span>
-      </a>
-      <div class="account">
-        <span><?= $escape($_SESSION['username'] ?? 'Administrator') ?> · Master</span>
-        <a class="module-access" href="modules.php">&larr; Kembali ke Pilih Modul</a>
-        <form action="logout.php" method="post">
-          <input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['csrf_token'] ?? '') ?>">
-          <button type="submit" class="logout">Keluar</button>
-        </form>
-      </div>
-    </header>
+    <?php require __DIR__ . '/views/topbar.php'; ?>
 
     <section class="intro">
       <p class="eyebrow">Data tenaga kerja</p>
