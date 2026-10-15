@@ -1,0 +1,5 @@
+.modules-screen{background-image:linear-gradient(180deg,rgba(15,18,21,.61) 0%,rgba(15,18,21,.46) 48%,rgba(8,12,16,.82) 100%),url('star-wagen-background.jpg');background-position:center,center 48%;background-size:cover;background-attachment:fixed}
+.modules-topbar{background:linear-gradient(100deg,rgba(12,14,16,.82),rgba(105,108,110,.72));backdrop-filter:blur(5px)}
+.module-intro h1{text-shadow:0 2px 16px #0009}.module-intro>p:last-child{text-shadow:0 1px 8px #000}
+.module-choice{border-color:#ffffffb0;box-shadow:0 14px 35px #0005}.modules-footer{color:#d0d0d0}
+@media(max-width:760px){.modules-screen{background-attachment:scroll;background-position:center,center center}}
